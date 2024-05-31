@@ -1,1 +1,5 @@
 npm run test:unit -- --watch=false
+
+npm run format
+
+npm run lint
