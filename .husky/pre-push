@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+. "${0%/*}/h"#!/bin/sh
+
+# Check if there are local changes
+if ! git diff-index --quiet HEAD --; then
+    echo "You have local changes. Push aborted."
+    exit 1
+fi
+
+# Run unit tests
+npm run test -- --watch=false
+UNIT_TEST_RESULT=$?
+
+if [ "$UNIT_TEST_RESULT" -ne 0]; then
+    echo "Unit tests failed. Push aborted."
+    exit 1
+fi
+
+# Run Playwright tests
+npx playwright test
+PLAYWRIGHT_TEST_RESULT=$?
+
+# Check if any of the tests failed
+if [ "$PLAYWRIGHT_TEST_RESULT" -ne 0 ]; then
+    echo "End-to-end tests failed. Push aborted."
+    exit 1
+fi
+
+exit 0
